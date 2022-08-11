@@ -7,6 +7,14 @@ ENV USERNAME autoware
 
 WORKDIR /home/autoware
 
+#update keys
+USER root
+RUN apt-key del 7fa2af80
+RUN rm /etc/apt/sources.list.d/cuda.list && rm /etc/apt/sources.list.d/nvidia-ml.list
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-keyring_1.0-1_all.deb
+RUN dpkg -i cuda-keyring_1.0-1_all.deb
+USER autoware
+
 # Update autoware/simulation package version to latest.
 COPY --chown=autoware update_sim_version.patch /home/$USERNAME/Autoware
 RUN patch ./Autoware/autoware.ai.repos /home/$USERNAME/Autoware/update_sim_version.patch
@@ -72,13 +80,35 @@ RUN echo "export CARLA_AUTOWARE_CONTENTS=~/autoware-contents" >> .bashrc \
     && echo "source ~/carla_ws/devel/setup.bash" >> .bashrc \
     && echo "source ~/Autoware/install/setup.bash" >> .bashrc
 
+# Update Launch Files
+RUN mkdir ./Documents
+COPY --chown=autoware $CARLA_AUTOWARE_ROOT/update_vehicle_model.launch.patch /home/$USERNAME/Documents
+COPY --chown=autoware $CARLA_AUTOWARE_ROOT/update_my_mission_planning.launch.patch /home/$USERNAME/Documents
+RUN patch /home/$USERNAME/Autoware/install/vehicle_description/share/vehicle_description/launch/vehicle_model.launch /home/$USERNAME/Documents/update_vehicle_model.launch.patch
+RUN patch /home/$USERNAME/carla-autoware/carla-autoware-agent/agent/launch/my_mission_planning.launch /home/$USERNAME/Documents/update_my_mission_planning.launch.patch
+
+
+# Install Git LFS
+USER root
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+RUN sudo apt-get install git-lfs
+RUN git lfs install
+USER autoware
+
+# Copy over autoware-contents
+RUN git clone -b master https://bitbucket.org/carla-simulator/autoware-contents.git
+#RUN mkdir ./autoware-contents
+#COPY --chown=autoware $CARLA_AUTOWARE_ROOT/autoware-contents/* /home/$USERNAME/autoware-contents
+#ADD --chown=autoware https://bitbucket.org/carla-simulator/autoware-contents.git ./autoware-contents
+#ADD $CARLA_AUTOWARE_ROOT/autoware-contents /home/$USERNAME/autoware-contents
+
 USER root
 
 # (Optional) Install vscode
-RUN apt-get update
-RUN apt-get install -y software-properties-common apt-transport-https wget
-RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-RUN add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-RUN apt-get -y install code
+#RUN apt-get update
+#RUN apt-get install -y software-properties-common apt-transport-https wget
+#RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
+#RUN add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+#RUN apt-get -y install code
 
 CMD ["/bin/bash"]

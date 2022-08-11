@@ -13,8 +13,7 @@ else
 fi
 
 docker run \
-    -it --rm \
-    --volume=$(pwd)/autoware-contents:/home/autoware/autoware-contents:rw \
+    -it \
     --env="XAUTHORITY=${XAUTH}" \
     --env="DISPLAY=${DISPLAY}" \
     --env="USER_ID=$USER_ID" \

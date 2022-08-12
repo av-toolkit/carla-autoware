@@ -16,11 +16,11 @@ RUN dpkg -i cuda-keyring_1.0-1_all.deb
 USER autoware
 
 # Update autoware/simulation package version to latest.
-COPY --chown=autoware update_sim_version.patch /home/$USERNAME/Autoware
+COPY --chown=autoware ./patchs/update_sim_version.patch /home/$USERNAME/Autoware
 RUN patch ./Autoware/autoware.ai.repos /home/$USERNAME/Autoware/update_sim_version.patch
 
 # Change code in autoware/simulation package.
-COPY --chown=autoware update_sim_code.patch /home/$USERNAME/Autoware/src/autoware/simulation
+COPY --chown=autoware ./patchs/update_sim_code.patch /home/$USERNAME/Autoware/src/autoware/simulation
 RUN cd /home/$USERNAME/Autoware \
     && vcs import src < autoware.ai.repos \
     && cd /home/$USERNAME/Autoware/src/autoware/simulation \
@@ -61,7 +61,7 @@ RUN git clone -b '0.9.11' --recurse-submodules https://github.com/carla-simulato
 # Update code in carla-ros-bridge package and fix the tf tree issue.
 # The fix has been introduced in latest version (since 0.9.12):
 # https://github.com/carla-simulator/ros-bridge/pull/570/commits/9f903cf43c4ef3dd0b909721e044c62a8796f841
-COPY --chown=autoware update_ros_bridge.patch /home/$USERNAME/ros-bridge
+COPY --chown=autoware ./patchs/update_ros_bridge.patch /home/$USERNAME/ros-bridge
 RUN cd /home/$USERNAME/ros-bridge \
     && git apply update_ros_bridge.patch
 
@@ -81,12 +81,9 @@ RUN echo "export CARLA_AUTOWARE_CONTENTS=~/autoware-contents" >> .bashrc \
     && echo "source ~/Autoware/install/setup.bash" >> .bashrc
 
 # Update Launch Files
-RUN mkdir ./Documents
-COPY --chown=autoware $CARLA_AUTOWARE_ROOT/update_vehicle_model.launch.patch /home/$USERNAME/Documents
-COPY --chown=autoware $CARLA_AUTOWARE_ROOT/update_my_mission_planning.launch.patch /home/$USERNAME/Documents
-RUN patch /home/$USERNAME/Autoware/install/vehicle_description/share/vehicle_description/launch/vehicle_model.launch /home/$USERNAME/Documents/update_vehicle_model.launch.patch
-RUN patch /home/$USERNAME/carla-autoware/carla-autoware-agent/agent/launch/my_mission_planning.launch /home/$USERNAME/Documents/update_my_mission_planning.launch.patch
-
+RUN mkdir -p ./Documents/patchs
+COPY --chown=autoware ./patchs/update_vehicle_model.launch.patch ./Documents/patchs
+RUN patch ./Autoware/install/vehicle_description/share/vehicle_description/launch/vehicle_model.launch ./Documents/patchs/update_vehicle_model.launch.patch
 
 # Install Git LFS
 USER root

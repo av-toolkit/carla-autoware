@@ -2,6 +2,8 @@
 
   <arg name='town' default='Town01'/>
 
+  <arg name='role_name' default='ego_vehicle'/>
+
   <arg name='vehicle_length' default='4.54'/>
   <arg name='vehicle_width' default='2.00'/>
 
@@ -43,6 +45,7 @@
 
   <group unless='$(arg use_ground_truth_localization)'>
     <include file='$(find carla_autoware_agent)/agent/launch/my_localization.launch'>
+	<arg name='role_name' value='$(arg role_name)'/>
     </include>
   </group>
 

@@ -26,11 +26,11 @@
       $(env CARLA_AUTOWARE_CONTENTS)/maps/vector_maps/asian/$(arg town)/roadsign.csv
       $(env CARLA_AUTOWARE_CONTENTS)/maps/vector_maps/asian/$(arg town)/vector.csv' 
   />
-
-  <!--<include file='$(find map_file)/launch/lanelet2_map_loader.launch'>-->
-    <!--<arg name='file_name' value='$(env CARLA_AUTOWARE_CONTENTS)/maps/vector_maps/lanelet2/$(arg town).osm'/>-->
-  <!--</include>-->
-
+<!--
+  <include file='$(find map_file)/launch/lanelet2_map_loader.launch'>
+    <arg name='file_name' value='$(env CARLA_AUTOWARE_CONTENTS)/maps/vector_maps/lanelet2/$(arg town).osm'/>
+  </include>
+-->
   <!--
     # wayarea2grid #
     Out: /grid_map_wayarea [grid_map_msgs::GridMap]

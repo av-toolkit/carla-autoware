@@ -1,4 +1,6 @@
 <launch>
+  <arg name='role_name' default='ego_vehicle'/>
+  <param name='role_name' value='$(arg role_name)'/>
 
   <!--
     # can2odom #
@@ -14,10 +16,8 @@
     This can be used as Autoware pose provider. The resulting pose is published on /gnss_pose
     @todo This is currently disabled. Instead the carla_autoware_bridge publishes a ground-truth /gnss_pose
   -->
-  <!--
   <node pkg='topic_tools' type='relay' name='gnss_relay' args='/carla/$(arg role_name)/gnss/gnss1/fix /fix'/>
   <include file='$(find gnss_localizer)/launch/fix2tfpose.launch'/>
-  -->
 
   <!-- Setup -->
   <arg name='x' value='0'/>

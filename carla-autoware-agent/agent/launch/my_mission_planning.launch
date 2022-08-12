@@ -18,7 +18,7 @@
   -->
   <include file='$(find decision_maker)/launch/decision_maker.launch'>
     <arg name='auto_engage' value='true' />
-    <arg name='disuse_vector_map' value='true'/>
+    <arg name='disuse_vector_map' value='false'/>
   </include>
 
   <!--
